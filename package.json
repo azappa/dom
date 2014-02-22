@@ -1,0 +1,10 @@
+{
+  "name": "selfish-dom",
+  "description": "Get elements into DOM and simply print them",
+  "version": "0.0.1",
+  "dependencies": {
+    "cheerio": "~0.13.1",
+    "request": "~2.34.0",
+    "sugar": "~1.4.1"
+  }
+}
