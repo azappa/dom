@@ -15,6 +15,7 @@ http.createServer(function (req, res) {
 
   //  -- getting url from url parameter in address bar (if not get a default address :D)
   var pageURL = url.parse(req.url, true).query.url || 'http://www.alessiozappa.com'
+    , pageElement = url.parse(req.url, true).query.element || '*'
     , outputObj
     ;
 
@@ -37,9 +38,9 @@ http.createServer(function (req, res) {
         //  -- everything went smooth (i hope!) --
         var $ = cheerio.load(b)
           , head = $.root().find('head').children()
-          , body = $.root().find('body').children()
+          , body = pageElement === '*' ? $.root().find('body').children() : $(pageElement)
           , checkTags = ['src', 'href']
-          , elements = [[head, 'head'], [body, 'body']]
+          , elements = pageElement === '*' ? [[head, 'head'], [body, 'body']] : [[body, 'body']]
           , iterate
           , replaceRelativeUrls
           , buildObjects
@@ -70,7 +71,7 @@ http.createServer(function (req, res) {
                 'depth': depth + 1,
                 'children': []
               };
-              
+
               arrayToAppend.push(tObj);
               iterate($(c), depth + 1, tObj.children);
             });
@@ -86,12 +87,20 @@ http.createServer(function (req, res) {
           }
         };
 
-
-        outputObj = {
-          'url': pageURL,
-          'head': [],
-          'body': []
-        };
+        if (pageElement === '*') {
+          outputObj = {
+            'url': pageURL,
+            'element': pageElement,
+            'head': [],
+            'body': []
+          };
+        } else {
+          outputObj = {
+            'url': pageURL,
+            'element': pageElement,
+            'body': []
+          };
+        }
 
         //  -- build each obj (head + body) --
         buildObjects = function (o) {
@@ -111,7 +120,11 @@ http.createServer(function (req, res) {
                   'children': []
                 };
 
-                iterate($(el), _depth, objToCreate.children);
+                if (pageElement !== '*') {
+                  objToCreate.value = $(el).text();
+                } else {
+                  iterate($(el), _depth, objToCreate.children);
+                }
                 outputObj[o[1]].push(objToCreate);
               } else {
                 return;
@@ -120,7 +133,13 @@ http.createServer(function (req, res) {
 
           } else {
             
-            outputObj[o[1]].push([{'html': $.root().find([o[1]]).html()}]);
+            outputObj[o[1]].push(
+              [
+                {
+                  'html': $.root().find([o[1]]).html(),
+                }
+              ]
+            );
 
           }
         };
