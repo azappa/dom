@@ -87,20 +87,18 @@ http.createServer(function (req, res) {
           }
         };
 
+
+        outputObj = {
+          'url': pageURL,
+          'element': pageElement
+        };
         if (pageElement === '*') {
-          outputObj = {
-            'url': pageURL,
-            'element': pageElement,
-            'head': [],
-            'body': []
-          };
+          outputObj.head = [];
+          outputObj.body = [];
         } else {
-          outputObj = {
-            'url': pageURL,
-            'element': pageElement,
-            'body': []
-          };
+          outputObj.body = [];
         }
+
 
         //  -- build each obj (head + body) --
         buildObjects = function (o) {
