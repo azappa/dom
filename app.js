@@ -50,8 +50,13 @@ http.createServer(function (req, res) {
         //  -- replace checkTags values with absolute path urls --
         replaceRelativeUrls = function (el) {
           checkTags.each(function (tag) {
-            if (Object.has(el.attribs, tag) && (!el.attribs[tag].startsWith(pageURL) && !el.attribs[tag].startsWith('//'))) {
-              el.attribs[tag] = (pageURL + '/' + el.attribs[tag]).replace('//', '/');
+            if (Object.has(el.attribs, tag)) {
+              if (typeof(el.attribs[tag] !== 'undefined' && el.attribs[tag] !== undefined)) {
+                if (el.attribs[tag].startsWith(new RegExp('^(?:[a-z]+:)?//', 'i'))) {
+                  return;
+                }
+                el.attribs[tag] = (pageURL + '/' + el.attribs[tag]).replace('//', '/');
+              }
             }
           });
         };
