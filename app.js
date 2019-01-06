@@ -12,7 +12,6 @@ http.createServer((req, res) => {
   const pageElement = url.parse(req.url, true).query.element || '*';
   let outputObj = null;
 
-
   request(pageURL, (e, r, b) => {
     if (e) {
       //  -- got an error --
@@ -40,7 +39,7 @@ http.createServer((req, res) => {
       replaceRelativeUrls = (el) => {
         checkTags.forEach((tag) => {
           if (Object.has(el.attribs, tag)) {
-            if (typeof el.attribs[tag] !== 'undefined' && el.attribs[tag] !== undefined) {
+            if (el.attribs[tag]) {
               if (
                 el.attribs[tag].startsWith('//')
                 || el.attribs[tag].startsWith('http://')
@@ -48,7 +47,7 @@ http.createServer((req, res) => {
               ) {
                 return;
               }
-              el.attribs[tag] = (pageURL + '/' + el.attribs[tag]).replace('//', '/');
+              el.attribs[tag] = `${pageURL}${el.attribs[tag].replace('//', '/')}`;
             }
           }
         });
@@ -134,7 +133,7 @@ http.createServer((req, res) => {
 
 
       //  -- send results --
-      res.end('<pre style="font-size: 11px;">' + JSON.stringify(outputObj, null, 2) + '</pre>', 'utf-8');
+      res.end(`<pre style="font-size: 11px;">'${JSON.stringify(outputObj, null, 2)}</pre>`, 'utf-8');
     }
   });
 }).listen(1337, '127.0.0.1');
