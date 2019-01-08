@@ -2,9 +2,6 @@ const http = require('http');
 const request = require('request');
 const cheerio = require('cheerio');
 const qs = require('query-string');
-const Sugar = require('sugar');
-
-Sugar.extend();
 
 http.createServer((req, res) => {
   //  -- getting url from url parameter in address bar (if not get a default address :D)
@@ -39,19 +36,18 @@ http.createServer((req, res) => {
       //  -- replace checkTags values with absolute path urls --
       replaceRelativeUrls = (el) => {
         checkTags.forEach((tag) => {
-          if (Object.has(el.attribs, tag)) {
-            if (el.attribs[tag]) {
-              if (
-                el.attribs[tag].startsWith('//')
-                || el.attribs[tag].startsWith('http://')
-                || el.attribs[tag].startsWith('https://')
-              ) {
-                return;
-              }
-              /* eslint-disable no-param-reassign */
-              el.attribs[tag] = `${pageURL}${el.attribs[tag].replace('//', '/')}`;
-              /* eslint-enable no-param-reassign */
+          const _tag = !!el.attribs && el.attribs[tag];
+          if (_tag) {
+            if (
+              _tag.startsWith('//')
+              || _tag.startsWith('http://')
+              || _tag.startsWith('https://')
+            ) {
+              return;
             }
+            /* eslint-disable no-param-reassign */
+            el.attribs[tag] = `${pageURL}${el.attribs[tag].replace('//', '/')}`;
+            /* eslint-enable no-param-reassign */
           }
         });
       };
