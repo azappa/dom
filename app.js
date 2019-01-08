@@ -20,6 +20,7 @@ http.createServer((req, res) => {
       res.end(JSON.stringify(outputObj));
       return;
     }
+
     //  -- status code is not ok --
     if (r.statusCode !== 200) {
       outputObj = { error: 'code ' + r.statusCode };
@@ -35,7 +36,6 @@ http.createServer((req, res) => {
       let replaceRelativeUrls = null;
       let buildObjects = null;
 
-
       //  -- replace checkTags values with absolute path urls --
       replaceRelativeUrls = (el) => {
         checkTags.forEach((tag) => {
@@ -48,12 +48,13 @@ http.createServer((req, res) => {
               ) {
                 return;
               }
+              /* eslint-disable no-param-reassign */
               el.attribs[tag] = `${pageURL}${el.attribs[tag].replace('//', '/')}`;
+              /* eslint-enable no-param-reassign */
             }
           }
         });
       };
-
 
       //  -- cycling through children --
       iterate = (el, depth, arrayToAppend) => {
@@ -82,18 +83,14 @@ http.createServer((req, res) => {
         }
       };
 
-
       outputObj = {
         url: pageURL,
-        element: pageElement
+        element: pageElement,
+        body: []
       };
       if (pageElement === '*') {
         outputObj.head = [];
-        outputObj.body = [];
-      } else {
-        outputObj.body = [];
       }
-
 
       //  -- build each obj (head + body) --
       buildObjects = (o) => {
@@ -112,7 +109,6 @@ http.createServer((req, res) => {
               };
 
               iterate($(el), depth, objToCreate.children);
-
               outputObj[o[1]].push(objToCreate);
             }
           });
@@ -123,12 +119,10 @@ http.createServer((req, res) => {
         }
       };
 
-
       //  -- build final object --
       elements.forEach((element) => {
         buildObjects(element);
       });
-
 
       //  -- send results --
       res.end(`<pre style="font-size: 11px;">'${JSON.stringify(outputObj, null, 2)}</pre>`, 'utf-8');
