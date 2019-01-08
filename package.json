@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
+    "query-string": "^6.2.0",
     "request": "^2.88.0",
     "sugar": "^2.0.6"
   },

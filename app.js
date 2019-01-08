@@ -1,15 +1,16 @@
 const http = require('http');
-const url = require('url');
 const request = require('request');
 const cheerio = require('cheerio');
+const qs = require('query-string');
 const Sugar = require('sugar');
 
 Sugar.extend();
 
 http.createServer((req, res) => {
   //  -- getting url from url parameter in address bar (if not get a default address :D)
-  const pageURL = url.parse(req.url, true).query.url || 'http://www.alessiozappa.com';
-  const pageElement = url.parse(req.url, true).query.element || '*';
+  const parsedQs = qs.parseUrl(req.url).query;
+  const pageURL = parsedQs.url || 'http://www.alessiozappa.com';
+  const pageElement = parsedQs.element || '*';
   let outputObj = null;
 
   request(pageURL, (e, r, b) => {
