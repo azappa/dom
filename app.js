@@ -134,4 +134,4 @@ http.createServer((req, res) => {
       res.end(`<pre style="font-size: 11px;">'${JSON.stringify(outputObj, null, 2)}</pre>`, 'utf-8');
     }
   });
-}).listen(1337, '127.0.0.1');
+}).listen(1337, '0.0.0.0');
