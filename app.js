@@ -111,11 +111,8 @@ http.createServer((req, res) => {
                 children: []
               };
 
-              if (pageElement !== '*') {
-                objToCreate.value = $(el).text();
-              } else {
-                iterate($(el), depth, objToCreate.children);
-              }
+              iterate($(el), depth, objToCreate.children);
+
               outputObj[o[1]].push(objToCreate);
             }
           });
